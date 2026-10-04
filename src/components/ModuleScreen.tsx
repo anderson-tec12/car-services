@@ -1,3 +1,5 @@
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import styled from '../theme/styled';
 import { theme } from '../theme/theme';
 
@@ -6,10 +8,11 @@ type ModuleScreenProps = {
   description: string;
 };
 
-const Container = styled.View`
+const Container = styled.View<{ paddingBottom: number }>`
   flex: 1;
   background-color: ${theme.colors.background};
   padding: ${theme.spacing.xl}px;
+  padding-bottom: ${(props) => props.paddingBottom}px;
 `;
 
 const Title = styled.Text`
@@ -26,8 +29,10 @@ const Description = styled.Text`
 `;
 
 export function ModuleScreen({ title, description }: ModuleScreenProps) {
+  const insets = useSafeAreaInsets();
+
   return (
-    <Container>
+    <Container paddingBottom={theme.spacing.xl + insets.bottom}>
       <Title>{title}</Title>
       <Description>{description}</Description>
     </Container>

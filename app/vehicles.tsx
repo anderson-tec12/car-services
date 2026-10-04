@@ -1,12 +1,13 @@
 import { router } from 'expo-router';
 import { FlatList, Pressable } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import styled from '../src/theme/styled';
 import { theme } from '../src/theme/theme';
 import { useVehicles } from '../src/vehicles/VehicleContext';
 import type { Vehicle } from '../src/db/vehicles';
 
-const Screen = styled.SafeAreaView`
+const Screen = styled(SafeAreaView)`
   flex: 1;
   background-color: ${theme.colors.background};
 `;
@@ -125,6 +126,7 @@ export default function VehiclesScreen() {
       </Header>
 
       <FlatList
+        style={{ flex: 1 }}
         data={vehicles}
         keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => (

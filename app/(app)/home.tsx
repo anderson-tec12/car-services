@@ -1,5 +1,6 @@
 import { Link } from 'expo-router';
 import { Pressable } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import styled from '../../src/theme/styled';
 import { theme } from '../../src/theme/theme';
@@ -37,12 +38,7 @@ const Screen = styled.View`
   background-color: ${theme.colors.background};
 `;
 
-const Content = styled.ScrollView.attrs({
-  contentContainerStyle: {
-    padding: theme.spacing.xl,
-    gap: theme.spacing.md,
-  },
-})`
+const Content = styled.ScrollView`
   flex: 1;
 `;
 
@@ -82,9 +78,17 @@ const ModuleDescription = styled.Text`
 `;
 
 export default function HomeScreen() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Screen>
-      <Content>
+      <Content
+        contentContainerStyle={{
+          padding: theme.spacing.xl,
+          paddingBottom: theme.spacing.xl + insets.bottom,
+          gap: theme.spacing.md,
+        }}
+      >
         <Title>Módulos</Title>
         <Subtitle>Escolha um módulo para acompanhar a manutenção.</Subtitle>
 

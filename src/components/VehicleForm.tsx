@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import styled from '../theme/styled';
 import { theme } from '../theme/theme';
@@ -12,7 +13,7 @@ type VehicleFormProps = {
   onSuccess: () => void;
 };
 
-const Screen = styled.SafeAreaView`
+const Screen = styled(SafeAreaView)`
   flex: 1;
   background-color: ${theme.colors.background};
 `;
