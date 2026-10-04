@@ -41,7 +41,7 @@ export function PlateHeader() {
   }
 
   return (
-    <Header paddingTop={Math.max(insets.top, theme.spacing.md)}>
+    <Header paddingTop={insets.top + theme.spacing.md}>
       <PlateButton onPress={() => router.push('/vehicles')}>
         <PlateText>{activeVehicle.plate}</PlateText>
       </PlateButton>
