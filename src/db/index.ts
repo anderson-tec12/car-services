@@ -4,6 +4,19 @@ const DATABASE_NAME = 'car-services.db';
 
 let database: SQLite.SQLiteDatabase | null = null;
 
+async function ensureColumn(
+  db: SQLite.SQLiteDatabase,
+  table: string,
+  column: string,
+  definition: string,
+): Promise<void> {
+  const columns = await db.getAllAsync<{ name: string }>(`PRAGMA table_info(${table})`);
+  const exists = columns.some((item) => item.name === column);
+  if (!exists) {
+    await db.execAsync(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+  }
+}
+
 async function migrate(db: SQLite.SQLiteDatabase): Promise<void> {
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS vehicles (
@@ -24,17 +37,26 @@ async function migrate(db: SQLite.SQLiteDatabase): Promise<void> {
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       FOREIGN KEY (vehicle_id) REFERENCES vehicles (id)
     );
+
+    CREATE TABLE IF NOT EXISTS coolant_changes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      vehicle_id INTEGER NOT NULL,
+      changed_on TEXT NOT NULL,
+      odometer_km INTEGER NOT NULL,
+      flush_done INTEGER NOT NULL DEFAULT 0,
+      photo_uri_1 TEXT,
+      photo_uri_2 TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (vehicle_id) REFERENCES vehicles (id)
+    );
   `);
 
-  const oilColumns = await db.getAllAsync<{ name: string }>(
-    'PRAGMA table_info(engine_oil_changes)',
-  );
-  const hasFilterChanged = oilColumns.some((column) => column.name === 'filter_changed');
-  if (!hasFilterChanged) {
-    await db.execAsync(
-      'ALTER TABLE engine_oil_changes ADD COLUMN filter_changed INTEGER NOT NULL DEFAULT 0',
-    );
-  }
+  await ensureColumn(db, 'engine_oil_changes', 'filter_changed', 'INTEGER NOT NULL DEFAULT 0');
+  await ensureColumn(db, 'engine_oil_changes', 'oil_brand', 'TEXT');
+  await ensureColumn(db, 'engine_oil_changes', 'oil_viscosity', 'TEXT');
+  await ensureColumn(db, 'engine_oil_changes', 'oil_type', 'TEXT');
+  await ensureColumn(db, 'engine_oil_changes', 'photo_uri_1', 'TEXT');
+  await ensureColumn(db, 'engine_oil_changes', 'photo_uri_2', 'TEXT');
 }
 
 export async function openDatabase(): Promise<SQLite.SQLiteDatabase> {

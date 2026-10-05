@@ -4,6 +4,11 @@ import { Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
+  getNextCoolantDue,
+  listCoolantChanges,
+  type CoolantNextDue,
+} from '../../src/db/coolantChanges';
+import {
   formatDisplayDate,
   formatKm,
   getNextEngineOilDue,
@@ -36,6 +41,7 @@ const Card = styled.View`
   border-width: 1px;
   border-color: #2a2a2a;
   padding: ${theme.spacing.lg}px;
+  margin-bottom: ${theme.spacing.md}px;
 `;
 
 const CardTitle = styled.Text`
@@ -61,22 +67,28 @@ const StatusText = styled.Text<{ overdue?: boolean }>`
 export default function AvisosScreen() {
   const insets = useSafeAreaInsets();
   const { activeVehicle } = useVehicles();
-  const [nextDue, setNextDue] = useState<EngineOilNextDue | null>(null);
+  const [oilNextDue, setOilNextDue] = useState<EngineOilNextDue | null>(null);
+  const [coolantNextDue, setCoolantNextDue] = useState<CoolantNextDue | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadAlerts = useCallback(async () => {
     if (!activeVehicle) {
-      setNextDue(null);
+      setOilNextDue(null);
+      setCoolantNextDue(null);
       setIsLoading(false);
       return;
     }
 
     setIsLoading(true);
     try {
-      const changes = await listEngineOilChanges(activeVehicle.id);
-      setNextDue(getNextEngineOilDue(changes));
+      const [oilChanges, coolantChanges] = await Promise.all([
+        listEngineOilChanges(activeVehicle.id),
+        listCoolantChanges(activeVehicle.id),
+      ]);
+      setOilNextDue(getNextEngineOilDue(oilChanges));
+      setCoolantNextDue(getNextCoolantDue(coolantChanges));
     } catch (error) {
-      console.error('Failed to load oil alerts', error);
+      console.error('Failed to load alerts', error);
       Alert.alert('Atenção', 'Não foi possível carregar os avisos.');
     } finally {
       setIsLoading(false);
@@ -103,24 +115,51 @@ export default function AvisosScreen() {
           <CardTitle>Óleo do motor</CardTitle>
           {isLoading ? (
             <CardBody>Carregando...</CardBody>
-          ) : nextDue ? (
+          ) : oilNextDue ? (
             <>
               <CardBody>
-                Última troca em {formatDisplayDate(nextDue.lastChange.changedOn)} (
-                {formatKm(nextDue.lastChange.odometerKm)}).
+                Última troca em {formatDisplayDate(oilNextDue.lastChange.changedOn)} (
+                {formatKm(oilNextDue.lastChange.odometerKm)}).
               </CardBody>
               <CardBody style={{ marginTop: theme.spacing.sm }}>
-                Próxima troca: até {formatDisplayDate(nextDue.nextDueDate)} ou aos{' '}
-                {formatKm(nextDue.nextDueKm)}, o que ocorrer primeiro.
+                Próxima troca: até {formatDisplayDate(oilNextDue.nextDueDate)} ou aos{' '}
+                {formatKm(oilNextDue.nextDueKm)}, o que ocorrer primeiro.
               </CardBody>
-              <StatusText overdue={nextDue.isOverdueByDate}>
-                {nextDue.isOverdueByDate
+              <StatusText overdue={oilNextDue.isOverdueByDate}>
+                {oilNextDue.isOverdueByDate
                   ? 'Troca vencida pela data'
                   : 'Dentro do prazo pela data'}
               </StatusText>
             </>
           ) : (
             <CardBody>Ainda não há prazo de óleo do motor. Registre a primeira troca.</CardBody>
+          )}
+        </Card>
+
+        <Card>
+          <CardTitle>Arrefecimento</CardTitle>
+          {isLoading ? (
+            <CardBody>Carregando...</CardBody>
+          ) : coolantNextDue ? (
+            <>
+              <CardBody>
+                Última troca em {formatDisplayDate(coolantNextDue.lastChange.changedOn)} (
+                {formatKm(coolantNextDue.lastChange.odometerKm)}).
+              </CardBody>
+              <CardBody style={{ marginTop: theme.spacing.sm }}>
+                Próxima troca: até {formatDisplayDate(coolantNextDue.nextDueDate)} ou aos{' '}
+                {formatKm(coolantNextDue.nextDueKm)}, o que ocorrer primeiro.
+              </CardBody>
+              <StatusText overdue={coolantNextDue.isOverdueByDate}>
+                {coolantNextDue.isOverdueByDate
+                  ? 'Troca vencida pela data'
+                  : 'Dentro do prazo pela data'}
+              </StatusText>
+            </>
+          ) : (
+            <CardBody>
+              Ainda não há prazo de arrefecimento. Registre a primeira troca.
+            </CardBody>
           )}
         </Card>
       </Content>

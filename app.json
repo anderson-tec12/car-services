@@ -16,6 +16,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.devtech.carservices",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#121212"
@@ -28,7 +29,22 @@
     "plugins": [
       "expo-router",
       "expo-sqlite",
-      "@react-native-community/datetimepicker"
-    ]
+      "@react-native-community/datetimepicker",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "O app acessa suas fotos para registrar o óleo usado na troca.",
+          "cameraPermission": "O app usa a câmera para fotografar o óleo usado na troca.",
+          "microphonePermission": false
+        }
+      ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "358b831a-5a31-4a7b-add0-a48fe6b8ee8a"
+      }
+    },
+    "owner": "anderson.tec1212"
   }
 }
