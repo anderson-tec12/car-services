@@ -1,7 +1,9 @@
 import { chromium } from 'playwright';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const outDir = '/Users/bbox/Projects/DevTech/car-services/docs/images';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const outDir = path.join(__dirname, '..', 'docs', 'images');
 const baseURL = 'http://localhost:8081';
 
 async function waitForText(page, text, timeout = 60000) {
@@ -25,6 +27,31 @@ async function tapText(page, text, options = {}) {
   const locator = page.getByText(text, options).first();
   await locator.waitFor({ state: 'visible', timeout: 30000 });
   await locator.click({ force: true });
+}
+
+async function captureSimpleChange(page, route, title, km, fileName) {
+  await page.goto(`${baseURL}${route}`, { waitUntil: 'domcontentloaded' });
+  await waitForText(page, title);
+  await waitForText(page, 'Registrar troca');
+  await fillByPlaceholder(page, 'Ex.: 45000', String(km));
+  await tapText(page, 'Salvar troca');
+  await page.waitForTimeout(1500);
+  const kmPattern = new RegExp(String(km).replace(/(\d)(?=(\d{3})+$)/g, '$1.?'));
+  await page.getByText(kmPattern).first().waitFor({ state: 'visible', timeout: 30000 });
+  await screenshot(page, fileName);
+}
+
+async function captureTabbedChange(page, route, tabLabel, km, fileName) {
+  await page.goto(`${baseURL}${route}`, { waitUntil: 'domcontentloaded' });
+  await waitForText(page, tabLabel);
+  await tapText(page, tabLabel, { exact: true });
+  await waitForText(page, 'Registrar troca');
+  await fillByPlaceholder(page, 'Ex.: 45000', String(km));
+  await tapText(page, 'Salvar troca');
+  await page.waitForTimeout(1500);
+  const kmPattern = new RegExp(String(km).replace(/(\d)(?=(\d{3})+$)/g, '$1.?'));
+  await page.getByText(kmPattern).first().waitFor({ state: 'visible', timeout: 30000 });
+  await screenshot(page, fileName);
 }
 
 async function main() {
@@ -71,9 +98,17 @@ async function main() {
   await tapText(page, 'Sintético', { exact: true });
   await tapText(page, 'Salvar troca');
   await page.waitForTimeout(1500);
-  // History shows formatted km; accept either form
   await page.getByText(/42.?000/).first().waitFor({ state: 'visible', timeout: 30000 });
   await screenshot(page, 'oleo-motor.png');
+
+  await page.goto(`${baseURL}/oleo-cambio`, { waitUntil: 'domcontentloaded' });
+  await waitForText(page, 'Registrar troca');
+  await fillByPlaceholder(page, 'Ex.: 45000', '41000');
+  await fillByPlaceholder(page, 'Ex.: Castrol', 'Castrol');
+  await tapText(page, 'Salvar troca');
+  await page.waitForTimeout(1500);
+  await page.getByText(/41.?000/).first().waitFor({ state: 'visible', timeout: 30000 });
+  await screenshot(page, 'oleo-cambio.png');
 
   await page.goto(`${baseURL}/arrefecimento`, { waitUntil: 'domcontentloaded' });
   await waitForText(page, 'Registrar troca');
@@ -83,6 +118,15 @@ async function main() {
   await page.waitForTimeout(1500);
   await page.getByText(/40.?000/).first().waitFor({ state: 'visible', timeout: 30000 });
   await screenshot(page, 'arrefecimento.png');
+
+  await captureSimpleChange(page, '/velas', 'Velas', 38000, 'velas.png');
+  await captureSimpleChange(page, '/bobinas', 'Bobinas', 37000, 'bobinas.png');
+  await captureTabbedChange(page, '/correias', 'Correia dentada', 36000, 'correias.png');
+  await captureSimpleChange(page, '/filtro-combustivel', 'Filtro de combustível', 35000, 'filtro-combustivel.png');
+  await captureTabbedChange(page, '/filtro-ar', 'Filtro do motor', 34000, 'filtro-ar.png');
+  await captureTabbedChange(page, '/suspensao-dianteira', 'Amortecedor', 33000, 'suspensao-dianteira.png');
+  await captureTabbedChange(page, '/suspensao-traseira', 'Amortecedor', 32000, 'suspensao-traseira.png');
+  await captureTabbedChange(page, '/freios', 'Pastilha dianteira', 31000, 'freios.png');
 
   await page.goto(`${baseURL}/avisos`, { waitUntil: 'domcontentloaded' });
   await waitForText(page, 'Óleo do motor');

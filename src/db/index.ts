@@ -49,6 +49,111 @@ async function migrate(db: SQLite.SQLiteDatabase): Promise<void> {
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       FOREIGN KEY (vehicle_id) REFERENCES vehicles (id)
     );
+
+    CREATE TABLE IF NOT EXISTS transmission_oil_changes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      vehicle_id INTEGER NOT NULL,
+      changed_on TEXT NOT NULL,
+      odometer_km INTEGER NOT NULL,
+      oil_brand TEXT,
+      photo_uri_1 TEXT,
+      photo_uri_2 TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (vehicle_id) REFERENCES vehicles (id)
+    );
+
+    CREATE TABLE IF NOT EXISTS spark_plug_changes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      vehicle_id INTEGER NOT NULL,
+      changed_on TEXT NOT NULL,
+      odometer_km INTEGER NOT NULL,
+      photo_uri_1 TEXT,
+      photo_uri_2 TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (vehicle_id) REFERENCES vehicles (id)
+    );
+
+    CREATE TABLE IF NOT EXISTS ignition_coil_changes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      vehicle_id INTEGER NOT NULL,
+      changed_on TEXT NOT NULL,
+      odometer_km INTEGER NOT NULL,
+      photo_uri_1 TEXT,
+      photo_uri_2 TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (vehicle_id) REFERENCES vehicles (id)
+    );
+
+    CREATE TABLE IF NOT EXISTS belt_changes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      vehicle_id INTEGER NOT NULL,
+      belt_kind TEXT NOT NULL,
+      changed_on TEXT NOT NULL,
+      odometer_km INTEGER NOT NULL,
+      photo_uri_1 TEXT,
+      photo_uri_2 TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (vehicle_id) REFERENCES vehicles (id)
+    );
+
+    CREATE TABLE IF NOT EXISTS fuel_filter_changes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      vehicle_id INTEGER NOT NULL,
+      changed_on TEXT NOT NULL,
+      odometer_km INTEGER NOT NULL,
+      photo_uri_1 TEXT,
+      photo_uri_2 TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (vehicle_id) REFERENCES vehicles (id)
+    );
+
+    CREATE TABLE IF NOT EXISTS air_filter_changes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      vehicle_id INTEGER NOT NULL,
+      filter_kind TEXT NOT NULL,
+      changed_on TEXT NOT NULL,
+      odometer_km INTEGER NOT NULL,
+      photo_uri_1 TEXT,
+      photo_uri_2 TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (vehicle_id) REFERENCES vehicles (id)
+    );
+
+    CREATE TABLE IF NOT EXISTS front_suspension_changes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      vehicle_id INTEGER NOT NULL,
+      part_kind TEXT NOT NULL,
+      changed_on TEXT NOT NULL,
+      odometer_km INTEGER NOT NULL,
+      photo_uri_1 TEXT,
+      photo_uri_2 TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (vehicle_id) REFERENCES vehicles (id)
+    );
+
+    CREATE TABLE IF NOT EXISTS rear_suspension_changes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      vehicle_id INTEGER NOT NULL,
+      part_kind TEXT NOT NULL,
+      changed_on TEXT NOT NULL,
+      odometer_km INTEGER NOT NULL,
+      photo_uri_1 TEXT,
+      photo_uri_2 TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (vehicle_id) REFERENCES vehicles (id)
+    );
+
+    CREATE TABLE IF NOT EXISTS brake_changes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      vehicle_id INTEGER NOT NULL,
+      part_kind TEXT NOT NULL,
+      changed_on TEXT NOT NULL,
+      odometer_km INTEGER NOT NULL,
+      photo_uri_1 TEXT,
+      photo_uri_2 TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (vehicle_id) REFERENCES vehicles (id)
+    );
   `);
 
   await ensureColumn(db, 'engine_oil_changes', 'filter_changed', 'INTEGER NOT NULL DEFAULT 0');

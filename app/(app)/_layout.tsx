@@ -55,10 +55,14 @@ export default function AppLayout() {
           <Stack.Screen name="oleo-motor" options={{ title: 'Óleo do motor' }} />
           <Stack.Screen name="oleo-cambio" options={{ title: 'Óleo de câmbio' }} />
           <Stack.Screen name="arrefecimento" options={{ title: 'Arrefecimento' }} />
-          <Stack.Screen
-            name="velas-bobinas-correias"
-            options={{ title: 'Velas, bobinas e correias' }}
-          />
+          <Stack.Screen name="velas" options={{ title: 'Velas' }} />
+          <Stack.Screen name="bobinas" options={{ title: 'Bobinas' }} />
+          <Stack.Screen name="correias" options={{ title: 'Correias' }} />
+          <Stack.Screen name="filtro-combustivel" options={{ title: 'Filtro de combustível' }} />
+          <Stack.Screen name="filtro-ar" options={{ title: 'Filtro de ar' }} />
+          <Stack.Screen name="suspensao-dianteira" options={{ title: 'Suspensão dianteira' }} />
+          <Stack.Screen name="suspensao-traseira" options={{ title: 'Suspensão traseira' }} />
+          <Stack.Screen name="freios" options={{ title: 'Freios' }} />
         </Stack>
       </View>
     </View>
