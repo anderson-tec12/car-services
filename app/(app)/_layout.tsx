@@ -43,6 +43,8 @@ export default function AppLayout() {
           initialRouteName="home"
           screenOptions={{
             headerShown: true,
+            animation: 'fade',
+            animationDuration: 300,
             headerStyle: { backgroundColor: theme.colors.background },
             headerTintColor: theme.colors.primary,
             headerTitleStyle: { color: theme.colors.text, fontWeight: '600' },
@@ -52,6 +54,11 @@ export default function AppLayout() {
         >
           <Stack.Screen name="home" options={{ title: 'Car Services', headerShown: false }} />
           <Stack.Screen name="avisos" options={{ title: 'Avisos' }} />
+          <Stack.Screen name="orcamentos" options={{ title: 'Orçamentos' }} />
+          <Stack.Screen name="orcamento" options={{ title: 'Orçamento' }} />
+          <Stack.Screen name="gastos" options={{ title: 'Gastos' }} />
+          <Stack.Screen name="ocorrencias" options={{ title: 'Ocorrências' }} />
+          <Stack.Screen name="ocorrencia" options={{ title: 'Ocorrência' }} />
           <Stack.Screen name="oleo-motor" options={{ title: 'Óleo do motor' }} />
           <Stack.Screen name="oleo-cambio" options={{ title: 'Óleo de câmbio' }} />
           <Stack.Screen name="arrefecimento" options={{ title: 'Arrefecimento' }} />

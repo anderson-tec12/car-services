@@ -154,6 +154,63 @@ async function migrate(db: SQLite.SQLiteDatabase): Promise<void> {
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       FOREIGN KEY (vehicle_id) REFERENCES vehicles (id)
     );
+
+    CREATE TABLE IF NOT EXISTS occurrences (
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      vehicle_id INTEGER NOT NULL,
+      occurred_on TEXT NOT NULL,
+      title TEXT NOT NULL,
+      notes TEXT,
+      resolved INTEGER NOT NULL DEFAULT 0,
+      resolution_notes TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (vehicle_id) REFERENCES vehicles (id)
+    );
+
+    CREATE TABLE IF NOT EXISTS occurrence_media (
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      occurrence_id INTEGER NOT NULL,
+      purpose TEXT NOT NULL,
+      kind TEXT NOT NULL,
+      uri TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (occurrence_id) REFERENCES occurrences (id)
+    );
+
+    CREATE TABLE IF NOT EXISTS occurrence_notes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      occurrence_id INTEGER NOT NULL,
+      body TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (occurrence_id) REFERENCES occurrences (id)
+    );
+
+    CREATE TABLE IF NOT EXISTS quotes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      vehicle_id INTEGER NOT NULL,
+      name TEXT NOT NULL,
+      store_name TEXT NOT NULL,
+      quoted_on TEXT NOT NULL,
+      approved INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (vehicle_id) REFERENCES vehicles (id)
+    );
+
+    CREATE TABLE IF NOT EXISTS quote_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      quote_id INTEGER NOT NULL,
+      name TEXT NOT NULL,
+      link TEXT,
+      price_cents INTEGER NOT NULL,
+      position INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (quote_id) REFERENCES quotes (id)
+    );
+
+    CREATE TABLE IF NOT EXISTS alert_notification_log (
+      alert_key TEXT PRIMARY KEY NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
   `);
 
   await ensureColumn(db, 'engine_oil_changes', 'filter_changed', 'INTEGER NOT NULL DEFAULT 0');
@@ -162,6 +219,18 @@ async function migrate(db: SQLite.SQLiteDatabase): Promise<void> {
   await ensureColumn(db, 'engine_oil_changes', 'oil_type', 'TEXT');
   await ensureColumn(db, 'engine_oil_changes', 'photo_uri_1', 'TEXT');
   await ensureColumn(db, 'engine_oil_changes', 'photo_uri_2', 'TEXT');
+
+  await db.execAsync(`
+    INSERT INTO occurrence_notes (occurrence_id, body, created_at)
+    SELECT occurrences.id, trim(occurrences.notes), occurrences.created_at
+    FROM occurrences
+    WHERE occurrences.notes IS NOT NULL
+      AND trim(occurrences.notes) != ''
+      AND NOT EXISTS (
+        SELECT 1 FROM occurrence_notes
+        WHERE occurrence_notes.occurrence_id = occurrences.id
+      );
+  `);
 }
 
 export async function openDatabase(): Promise<SQLite.SQLiteDatabase> {

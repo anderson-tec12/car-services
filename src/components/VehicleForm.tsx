@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -11,6 +11,7 @@ type VehicleFormProps = {
   subtitle: string;
   submitLabel: string;
   onSuccess: () => void;
+  footer?: ReactNode;
 };
 
 const Screen = styled(SafeAreaView)`
@@ -77,11 +78,16 @@ const SubmitLabel = styled.Text`
   font-weight: 700;
 `;
 
+const Footer = styled.View`
+  margin-top: ${theme.spacing.lg}px;
+`;
+
 export function VehicleForm({
   title,
   subtitle,
   submitLabel,
   onSuccess,
+  footer,
 }: VehicleFormProps) {
   const { createVehicle } = useVehicles();
   const [brand, setBrand] = useState('');
@@ -148,6 +154,7 @@ export function VehicleForm({
           <SubmitButton disabled={isSubmitting} onPress={handleSubmit}>
             <SubmitLabel>{isSubmitting ? 'Salvando...' : submitLabel}</SubmitLabel>
           </SubmitButton>
+          {footer ? <Footer>{footer}</Footer> : null}
         </Content>
       </KeyboardAvoidingView>
     </Screen>

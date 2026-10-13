@@ -1,4 +1,5 @@
 import { router } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
 import { Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -13,6 +14,16 @@ const Header = styled.View<{ paddingTop: number }>`
   padding-top: ${(props) => props.paddingTop}px;
   padding-horizontal: ${theme.spacing.md}px;
   padding-bottom: ${theme.spacing.md}px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const SettingsButton = styled(Pressable)`
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
 `;
 
 const PlateButton = styled(Pressable)`
@@ -45,6 +56,16 @@ export function PlateHeader() {
       <PlateButton onPress={() => router.push('/vehicles')}>
         <PlateText>{activeVehicle.plate}</PlateText>
       </PlateButton>
+      <SettingsButton
+        accessibilityLabel="Configurações"
+        onPress={() => router.push('/configuracoes')}
+      >
+        <SymbolView
+          name={{ ios: 'gearshape', android: 'settings', web: 'settings' }}
+          tintColor={theme.colors.primary}
+          size={22}
+        />
+      </SettingsButton>
     </Header>
   );
 }

@@ -15,6 +15,36 @@ const AVISOS_MODULE = {
 
 const MODULES = [
   {
+    href: '/orcamentos' as const,
+    title: 'Orçamentos',
+    description: 'Cotações com itens, preços e aprovação.',
+    icon: {
+      ios: 'doc.text.fill' as const,
+      android: 'request_quote' as const,
+      web: 'request_quote' as const,
+    },
+  },
+  {
+    href: '/gastos' as const,
+    title: 'Gastos',
+    description: 'Soma dos orçamentos já aprovados.',
+    icon: {
+      ios: 'creditcard.fill' as const,
+      android: 'payments' as const,
+      web: 'payments' as const,
+    },
+  },
+  {
+    href: '/ocorrencias' as const,
+    title: 'Ocorrências',
+    description: 'Relatos de problemas e soluções do veículo.',
+    icon: {
+      ios: 'exclamationmark.triangle.fill' as const,
+      android: 'warning' as const,
+      web: 'warning' as const,
+    },
+  },
+  {
     href: '/oleo-motor' as const,
     title: 'Óleo do motor',
     description: 'Registros e acompanhamento do óleo do motor.',

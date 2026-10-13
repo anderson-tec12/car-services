@@ -21,7 +21,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#121212"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.SCHEDULE_EXACT_ALARM"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -33,11 +36,29 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "O app acessa suas fotos para registrar o óleo usado na troca.",
-          "cameraPermission": "O app usa a câmera para fotografar o óleo usado na troca.",
-          "microphonePermission": false
+          "photosPermission": "O app acessa suas fotos e vídeos para registrar manutenções e ocorrências.",
+          "cameraPermission": "O app usa a câmera para fotografar e gravar vídeos de manutenções e ocorrências.",
+          "microphonePermission": "O app usa o microfone para gravar áudios e vídeos das ocorrências."
         }
-      ]
+      ],
+      "expo-sharing",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#F5C400",
+          "defaultChannel": "manutencao"
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "O app usa o microfone para gravar áudios e vídeos das ocorrências.",
+          "enableBackgroundPlayback": false,
+          "enableBackgroundRecording": false
+        }
+      ],
+      "expo-video"
     ],
     "extra": {
       "router": {},
